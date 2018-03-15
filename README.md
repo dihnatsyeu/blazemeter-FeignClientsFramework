@@ -98,23 +98,26 @@ public class MockServerManager {
 Let’s look at this code:
 
 In the start () method we have the following:
-The line “this.mockServer = ClientAndServer.startClientAndServer(1080);” starts a local web server with host = localhost and port 1080.
+The line “this.mockServer = ClientAndServer.startClientAndServer(port);” starts a local web server with host localhost 
+and port configured in properties. Later the line "MockServerClient client = new MockServerClient(host, port);" starts
+new MockServerClient with the host and port from the properties. Spring Boot gives us a great flexibility in managing 
+properties:it automatically recognizes and loads into a context all the properties located in the resource folder 
+from the file with the name “application.properties”. Property values can be accessed directly with 
+@Value("{[propertyName]}") annotation. There are many ways you can load external properties into your application, 
+you can read about them in the [documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html).
+A bean where property values are read should be also loaded via Spring Boot application context by annotating class 
+with @Component. There are more annotations that can indicate that a bean should be managed by Spring, 
+like @Repository, @Service or @Controller. All of them add additional meaning to beans they are applied to and usually 
+used in MVC applications (or to work with databases if @Repository is used).
 
-Now we configure the server behavior according towith the usage of the MockServerClient. The syntax is quite straightforward:
+The server behavior is configured according to the usage of the MockServerClient. The syntax is quite straightforward:
+1) 	Setup ‘POST’ method. When the server met the ‘POST’ request with the path ‘buyBook’ and the body 
+("{\"author\":\"Homer\", \"title\":\"The Odyssey\"}"  in JSON format, it responds with the status code 200, and, 
+with the header "Content-Type", "application/json"  indicating that the response is in JSON format. It responds with 
+the body of the book that is purchased: ("{\"author\":\"Homer\", \"title\":\"The Odyssey\", \"price\":200}"
 
-1) 	Setup ‘POST’ method. When the server met the ‘POST’ request with the path ‘buyBook’ and the body ("{\"author\":\"Homer\", \"title\":\"The Odyssey\"}"  in JSON format, it responds with the status code 200, and, with the header "Content-Type", "application/json"  indicating that the response is in JSON format. It responds with the body of the book that is purchased: ("{\"author\":\"Homer\", \"title\":\"The Odyssey\", \"price\":200}"
+2) 	Setup “GET” method. When the server met the GET request with the path ‘/getBooks’, it responds with the header 
+"Content-Type", "application/json", indicating that the response in in JSON format, the body          
+"[{\"author\":\"Homer\", \"title\":\"The Odyssey\", \"price\":200}]" and the status code 200.
 
-2) 	Setup “GET” method. When the server met the GET request with the path ‘/getBooks’, it responds with the header "Content-Type", "application/json", indicating that the response in in JSON format, the body          "[{\"author\":\"Homer\", \"title\":\"The Odyssey\", \"price\":200}]" and the status code 200.
-
-You may have noticed that in the code above, “MockServerClient” was bound to a server with the hard-coded host “localhost” and the port “1080”. This isIt’s not a good practice since those configurations may change. Instead, we can use the power of Spring Boot and move all the properties we have (in thise blog post it’s only the host and the port where service is deployed) to a property file. Spring Boot automatically recognizes and loads into a context all the properties located in theinto resource folder from the file with the name “application.properties”. There are many ways you can load external properties into your application, you can read about them in the documentation.
-
-  
-In the blog, the application.properties file looks like thisbelow:
-
-To read any value from properties, the annotation @Value annotation is used. It should refer to the property name which value should be associated with a variable.
  
-Next, to load the property value from the Spring Boot application context, we need to declare the MockServerManager class as a bean that should be managed by the Spring application context. This can be done with annotation @Component. 
-
-There are more annotations that can indicate that a bean should be managed by Spring, like @Repository, @Service or @Controller. All of them add additional meaning to beans they are applied to and usually used in MVC applications (or to work with databases if @Repository is used). In the blog post we will use only @Component annotation.
-
-
