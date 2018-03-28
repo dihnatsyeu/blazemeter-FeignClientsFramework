@@ -4,9 +4,9 @@
 
 To see how framework with usage of Feign Clients works, we need a RESTful web service for testing.
 In the real world, you don’t need to create a web service that you would like to test with Feign, as it already exists. 
-But in the demo we need to bypass this and create a mock server with the desired methods and responses. 
+But in the demo we need to bypass this and create the mock server with the desired methods and responses. 
 In this, the [MockServer](http://www.mock-server.com/) will come to our help.
-Define a new dependency in pom.xml:
+The defined dependency from MockServer in pom.xml:
 ``` 
 <dependency>
 	<groupId>org.mock-server</groupId>
@@ -14,7 +14,7 @@ Define a new dependency in pom.xml:
 	<version>5.3.0</version>
 </dependency>
  ```
-Created mock server simulates a bookstore service. It has two methods: 
+The created mock server simulates a bookstore service. It has two methods: 
 getBooks – to view the list of available books. Each book has an author, title and price.
 buyBook - method to buy a book. The buyBbook request accepts a book entity that is being purchased. It responds with thecode 200 if 
 the book is found and returns the book that is bought.
